@@ -86,17 +86,42 @@ Promise.all(slugPromises)
 		var collection = match.collection;
 		var slugData = match.slugData;
 
-		var itemKey = slugData.idItem || slugData.id || slugData.key || slugData.itemKey;
+		var itemKey = '';
+		if(typeof slugData === 'string' || typeof slugData === 'number'){
+			itemKey = String(slugData);
+		}else if(slugData && typeof slugData === 'object'){
+			itemKey = slugData.idItem || slugData.id || slugData.key || slugData.itemKey || slugData.itemId || slugData.idNegocio || slugData.idRegistro;
+		}
 		if(!itemKey){
 			return null;
 		}
 
-		var itemRef = db.ref(basePath + "/data/" + collection + "/" + itemKey);
-		return itemRef.once('value').then(function(itemSnapshot){
-			if(!itemSnapshot.exists()){
+		var itemPaths = [
+			basePath + "/data/" + collection + "/" + itemKey,
+			basePath + "/" + collection + "/data/" + itemKey,
+			basePath + "/" + collection + "/" + itemKey
+		];
+
+		var itemPromise = Promise.resolve(null);
+		itemPaths.forEach(function(path){
+			itemPromise = itemPromise.then(function(found){
+				if(found){
+					return found;
+				}
+				return db.ref(path).once('value').then(function(itemSnapshot){
+					if(!itemSnapshot.exists()){
+						return null;
+					}
+					return itemSnapshot.val();
+				});
+			});
+		});
+
+		return itemPromise.then(function(itemData){
+			if(!itemData){
 				return null;
 			}
-			FrenifyDeebo.applyProfileData(collection, itemSnapshot.val());
+			FrenifyDeebo.applyProfileData(collection, itemData);
 			return null;
 		});
 	})
