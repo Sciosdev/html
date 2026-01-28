@@ -128,6 +128,8 @@ Promise.all(collectionPromises)
 			}
 
 			var phoneValue = data.telefono || data.telefonoAfiliado || '';
+			var avatarImage = collection === 'Negocios' ? data.imgRepresentante : data.imgAfiliado;
+			var circleImage = collection === 'Negocios' ? data.imgNegocio : data.imgVehiculo;
 			var entry = {
 				name: data.nombreAfiliado || '',
 				giro: data.Giro || '',
@@ -151,6 +153,9 @@ Promise.all(collectionPromises)
 			FrenifyDeebo.setFieldValue('coordinates', entry.coordinates, true);
 			FrenifyDeebo.setFieldValue('join-date', entry.joinDate, true);
 			FrenifyDeebo.setFieldValue('phone', entry.phone, true, true);
+			FrenifyDeebo.setImageField('avatar-image', avatarImage);
+			FrenifyDeebo.setImageField('circle-bg', circleImage, true);
+			FrenifyDeebo.setImageField('circle-img', circleImage);
 		},
 
 		setFieldValue: function(field, value, showWhenEmpty, isPhone){
@@ -172,6 +177,30 @@ Promise.all(collectionPromises)
 				return;
 			}
 			element.text(value || '-');
+		},
+
+		setImageField: function(field, value, useAsBackground){
+			if(!value){
+				return;
+			}
+			var elements = $('[data-field="' + field + '"]');
+			if(!elements.length){
+				return;
+			}
+			elements.each(function(){
+				var element = $(this);
+				if(useAsBackground){
+					element.attr('data-bg-img', value);
+					element.css({backgroundImage:'url(' + value + ')'});
+					return;
+				}
+				if(element.is('img')){
+					element.attr('src', value);
+					return;
+				}
+				element.attr('data-bg-img', value);
+				element.css({backgroundImage:'url(' + value + ')'});
+			});
 		},
 
 		formatDate: function(timestamp){
