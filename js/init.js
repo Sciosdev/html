@@ -147,6 +147,7 @@ Promise.all(collectionPromises)
 			};
 
 			FrenifyDeebo.setFieldValue('name', entry.name, true);
+			FrenifyDeebo.setHeaderName(entry.name);
 			FrenifyDeebo.setFieldValue('giro', entry.giro, collection === 'Negocios');
 			FrenifyDeebo.setFieldValue('business', entry.business, collection === 'Negocios');
 			FrenifyDeebo.setFieldValue('vehicle', entry.vehicle, collection !== 'Negocios');
@@ -161,6 +162,22 @@ Promise.all(collectionPromises)
 			FrenifyDeebo.setImageField('avatar-image', avatarImage);
 			FrenifyDeebo.setImageField('circle-bg', circleImage, true);
 			FrenifyDeebo.setImageField('circle-img', circleImage);
+		},
+
+		setHeaderName: function(value){
+			var element = $('[data-field="header-name"]');
+			if(!element.length){
+				return;
+			}
+			var safeValue = value || '-';
+			var parts = safeValue.trim().split(/\s+/);
+			var firstName = parts.shift() || safeValue;
+			var remainder = parts.join(' ');
+			element.empty();
+			element.append($('<span></span>').text(firstName));
+			if(remainder){
+				element.append(' ' + remainder);
+			}
 		},
 
 		setFieldValue: function(field, value, showWhenEmpty, isPhone){
