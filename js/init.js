@@ -31,6 +31,155 @@ $.fn.DeeboProgressIsInViewport = function(content) {
 			FrenifyDeebo.magnific();
 			FrenifyDeebo.anchor();
 			FrenifyDeebo.darklight();
+			FrenifyDeebo.loadFirebaseProfile();
+		},
+
+		loadFirebaseProfile: function(){
+			if(typeof firebase === 'undefined'){
+				return;
+			}
+
+			var slug = FrenifyDeebo.getSlugFromPath();
+			if(!slug){
+				return;
+			}
+
+			var firebaseConfig = {
+				apiKey: "AIzaSyCiGeCQ3iy6mwNIe303tWBIB1Uduyss1y4",
+				authDomain: "acme-b9b61.firebaseapp.com",
+				databaseURL: "https://acme-b9b61-default-rtdb.firebaseio.com",
+				projectId: "acme-b9b61",
+				storageBucket: "acme-b9b61.appspot.com",
+				messagingSenderId: "550286905719",
+				appId: "1:550286905719:web:988d4c339c7e7fd23f1172",
+				measurementId: "G-P8JM5MP1ZC"
+			};
+
+			if(!firebase.apps.length){
+				firebase.initializeApp(firebaseConfig);
+			}
+
+			var db = firebase.database();
+			var basePath = "projects/proj_72hJFm1Yto";
+			var collections = ['Negocios', 'vehiculoCargaChica', 'vehiculoParticular'];
+			var slugPromises = collections.map(function(collection){
+				var slugRef = db.ref(basePath + "/" + collection + "/slugs/" + slug);
+				return slugRef.once('value').then(function(snapshot){
+					if(!snapshot.exists()){
+						return null;
+					}
+					return {
+						collection: collection,
+						slugData: snapshot.val() || {}
+					};
+				});
+			});
+
+			Promise.all(slugPromises)
+				.then(function(results){
+					var match = results.filter(Boolean)[0];
+					if(!match){
+						return null;
+					}
+					var collection = match.collection;
+					var slugData = match.slugData;
+					var itemKey = slugData.idItem || slugData.id || slugData.key || slugData.itemKey;
+					if(!itemKey){
+						return null;
+					}
+					var itemRef = db.ref(basePath + "/data/" + collection + "/" + itemKey);
+					return itemRef.once('value').then(function(itemSnapshot){
+						if(!itemSnapshot.exists()){
+							return null;
+						}
+						FrenifyDeebo.applyProfileData(collection, itemSnapshot.val());
+						return null;
+					});
+				})
+				.catch(function(error){
+					if(window.console && window.console.warn){
+						window.console.warn('Firebase load failed', error);
+					}
+				});
+		},
+
+		getSlugFromPath: function(){
+			var path = window.location.pathname || '';
+			var cleaned = path.replace(/\/+$/,'').replace(/^\/+/,'');
+			if(!cleaned || cleaned === 'index.html' || cleaned === 'index-light.html'){
+				return '';
+			}
+			return cleaned;
+		},
+
+		applyProfileData: function(collection, data){
+			var formattedDate = FrenifyDeebo.formatDate(data.fechaAfiliacion);
+			var coordinates = '';
+			if(data.latitude && data.longitude){
+				coordinates = data.latitude + ', ' + data.longitude;
+			}
+
+			var phoneValue = data.telefono || data.telefonoAfiliado || '';
+			var entry = {
+				name: data.nombreAfiliado || '',
+				giro: data.Giro || '',
+				business: data.nombreNegocio || '',
+				vehicle: data.nombreVehiculo || '',
+				folio: data.folio || '',
+				address: data.direccion || '',
+				plate: data.placaVehiculo || '',
+				coordinates: coordinates,
+				joinDate: formattedDate,
+				phone: phoneValue
+			};
+
+			FrenifyDeebo.setFieldValue('name', entry.name, true);
+			FrenifyDeebo.setFieldValue('giro', entry.giro, collection === 'Negocios');
+			FrenifyDeebo.setFieldValue('business', entry.business, collection === 'Negocios');
+			FrenifyDeebo.setFieldValue('vehicle', entry.vehicle, collection !== 'Negocios');
+			FrenifyDeebo.setFieldValue('folio', entry.folio, true);
+			FrenifyDeebo.setFieldValue('address', entry.address, collection === 'Negocios');
+			FrenifyDeebo.setFieldValue('plate', entry.plate, collection !== 'Negocios');
+			FrenifyDeebo.setFieldValue('coordinates', entry.coordinates, true);
+			FrenifyDeebo.setFieldValue('join-date', entry.joinDate, true);
+			FrenifyDeebo.setFieldValue('phone', entry.phone, true, true);
+		},
+
+		setFieldValue: function(field, value, showWhenEmpty, isPhone){
+			var element = $('[data-field="' + field + '"]');
+			if(!element.length){
+				return;
+			}
+			var listItem = element.closest('li');
+			if(!value && !showWhenEmpty){
+				listItem.hide();
+				return;
+			}
+			listItem.show();
+			if(isPhone){
+				element.text(value || '-');
+				if(value){
+					element.attr('href', 'tel:' + value.replace(/\s+/g,''));
+				}
+				return;
+			}
+			element.text(value || '-');
+		},
+
+		formatDate: function(timestamp){
+			if(!timestamp){
+				return '';
+			}
+			var date = new Date(Number(timestamp));
+			if(Number.isNaN(date.getTime())){
+				return '';
+			}
+			var formatted = new Intl.DateTimeFormat('es-MX', {
+				month: 'long',
+				day: 'numeric',
+				year: 'numeric'
+			}).format(date);
+			return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 		},
 		
 		darklight: function(){
