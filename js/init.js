@@ -59,48 +59,52 @@ $.fn.DeeboProgressIsInViewport = function(content) {
 				firebase.initializeApp(firebaseConfig);
 			}
 
-			var db = firebase.database();
-			var basePath = "projects/proj_72hJFm1Yto";
-			var collections = ['Negocios', 'vehiculoCargaChica', 'vehiculoParticular'];
-			var slugPromises = collections.map(function(collection){
-				var slugRef = db.ref(basePath + "/" + collection + "/slugs/" + slug);
-				return slugRef.once('value').then(function(snapshot){
-					if(!snapshot.exists()){
-						return null;
-					}
-					return {
-						collection: collection,
-						slugData: snapshot.val() || {}
-					};
-				});
-			});
+var db = firebase.database();
+var basePath = "projects/proj_72hJFm1Yto";
+var collections = ['Negocios', 'vehiculoCargaChica', 'vehiculoParticular'];
 
-			Promise.all(slugPromises)
-				.then(function(results){
-					var match = results.filter(Boolean)[0];
-					if(!match){
-						return null;
-					}
-					var collection = match.collection;
-					var slugData = match.slugData;
-					var itemKey = slugData.idItem || slugData.id || slugData.key || slugData.itemKey;
-					if(!itemKey){
-						return null;
-					}
-					var itemRef = db.ref(basePath + "/data/" + collection + "/" + itemKey);
-					return itemRef.once('value').then(function(itemSnapshot){
-						if(!itemSnapshot.exists()){
-							return null;
-						}
-						FrenifyDeebo.applyProfileData(collection, itemSnapshot.val());
-						return null;
-					});
-				})
-				.catch(function(error){
-					if(window.console && window.console.warn){
-						window.console.warn('Firebase load failed', error);
-					}
-				});
+var slugPromises = collections.map(function(collection){
+	var slugRef = db.ref(basePath + "/" + collection + "/slugs/" + slug);
+	return slugRef.once('value').then(function(snapshot){
+		if(!snapshot.exists()){
+			return null;
+		}
+		return {
+			collection: collection,
+			slugData: snapshot.val() || {}
+		};
+	});
+});
+
+Promise.all(slugPromises)
+	.then(function(results){
+		var match = results.filter(Boolean)[0];
+		if(!match){
+			return null;
+		}
+
+		var collection = match.collection;
+		var slugData = match.slugData;
+
+		var itemKey = slugData.idItem || slugData.id || slugData.key || slugData.itemKey;
+		if(!itemKey){
+			return null;
+		}
+
+		var itemRef = db.ref(basePath + "/data/" + collection + "/" + itemKey);
+		return itemRef.once('value').then(function(itemSnapshot){
+			if(!itemSnapshot.exists()){
+				return null;
+			}
+			FrenifyDeebo.applyProfileData(collection, itemSnapshot.val());
+			return null;
+		});
+	})
+	.catch(function(error){
+		if(window.console && window.console.warn){
+			window.console.warn('Firebase load failed', error);
+		}
+	});
 		},
 
 		getSlugFromPath: function(){
