@@ -127,20 +127,23 @@ Promise.all(collectionPromises)
 				coordinates = data.latitude + ', ' + data.longitude;
 			}
 
+			var quoteValue = collection === 'Negocios' ? data.descripcion : data.nombreVehiculo;
 			var phoneValue = data.telefono || data.telefonoAfiliado || '';
 			var avatarImage = collection === 'Negocios' ? data.imgRepresentante : data.imgAfiliado;
 			var circleImage = collection === 'Negocios' ? data.imgNegocio : data.imgVehiculo;
+			var addressValue = collection === 'Negocios' ? data.direccion : '';
 			var entry = {
 				name: data.nombreAfiliado || '',
 				giro: data.Giro || '',
 				business: data.nombreNegocio || '',
 				vehicle: data.nombreVehiculo || '',
 				folio: data.folio || '',
-				address: data.direccion || '',
+				address: addressValue || '',
 				plate: data.placaVehiculo || '',
 				coordinates: coordinates,
 				joinDate: formattedDate,
-				phone: phoneValue
+				phone: phoneValue,
+				quote: quoteValue || ''
 			};
 
 			FrenifyDeebo.setFieldValue('name', entry.name, true);
@@ -153,6 +156,8 @@ Promise.all(collectionPromises)
 			FrenifyDeebo.setFieldValue('coordinates', entry.coordinates, true);
 			FrenifyDeebo.setFieldValue('join-date', entry.joinDate, true);
 			FrenifyDeebo.setFieldValue('phone', entry.phone, true, true);
+			FrenifyDeebo.setQuoteField(entry.quote);
+			FrenifyDeebo.setAddressLink(entry.address, entry.coordinates);
 			FrenifyDeebo.setImageField('avatar-image', avatarImage);
 			FrenifyDeebo.setImageField('circle-bg', circleImage, true);
 			FrenifyDeebo.setImageField('circle-img', circleImage);
@@ -177,6 +182,44 @@ Promise.all(collectionPromises)
 				return;
 			}
 			element.text(value || '-');
+		},
+
+		setQuoteField: function(value){
+			var element = $('[data-field="quote"]');
+			if(!element.length || !value){
+				return;
+			}
+			element.text(value);
+		},
+
+		setAddressLink: function(address, coordinates){
+			var element = $('[data-field="address-link"]');
+			if(!element.length){
+				return;
+			}
+			var listItem = element.closest('li');
+			var hasAddress = Boolean(address);
+			var hasCoordinates = Boolean(coordinates);
+			if(!hasAddress){
+				listItem.hide();
+				return;
+			}
+			listItem.show();
+			if(hasAddress){
+				element.text(address);
+			}
+			if(hasCoordinates){
+				var mapUrl = 'https://www.google.com/maps?q=' + encodeURIComponent(coordinates);
+				element.attr({
+					href: mapUrl,
+					target: '_blank',
+					rel: 'noopener'
+				});
+			}else{
+				element.removeAttr('href');
+				element.removeAttr('target');
+				element.removeAttr('rel');
+			}
 		},
 
 		setImageField: function(field, value, useAsBackground){
