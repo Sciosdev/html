@@ -63,67 +63,46 @@ var db = firebase.database();
 var basePath = "projects/proj_72hJFm1Yto";
 var collections = ['Negocios', 'vehiculoCargaChica', 'vehiculoParticular'];
 
-var slugPromises = collections.map(function(collection){
-	var slugRef = db.ref(basePath + "/" + collection + "/slugs/" + slug);
-	return slugRef.once('value').then(function(snapshot){
+var collectionPromises = collections.map(function(collection){
+	var collectionRef = db.ref(basePath + "/data/" + collection);
+	return collectionRef.once('value').then(function(snapshot){
 		if(!snapshot.exists()){
 			return null;
 		}
-		return {
-			collection: collection,
-			slugData: snapshot.val() || {}
-		};
+		var match = null;
+		snapshot.forEach(function(childSnapshot){
+			if(match){
+				return true;
+			}
+			var itemData = childSnapshot.val() || {};
+			var slugMatch = false;
+			if(typeof itemData.slug === 'string' || typeof itemData.slug === 'number'){
+				slugMatch = String(itemData.slug) === slug;
+			}else if(itemData.slug && typeof itemData.slug === 'object'){
+				slugMatch = Object.prototype.hasOwnProperty.call(itemData.slug, slug);
+			}else if(itemData.slugs && typeof itemData.slugs === 'object'){
+				slugMatch = Object.prototype.hasOwnProperty.call(itemData.slugs, slug);
+			}
+			if(!slugMatch){
+				return;
+			}
+			match = {
+				collection: collection,
+				itemData: itemData
+			};
+		});
+		return match;
 	});
 });
 
-Promise.all(slugPromises)
+Promise.all(collectionPromises)
 	.then(function(results){
 		var match = results.filter(Boolean)[0];
 		if(!match){
 			return null;
 		}
-
-		var collection = match.collection;
-		var slugData = match.slugData;
-
-		var itemKey = '';
-		if(typeof slugData === 'string' || typeof slugData === 'number'){
-			itemKey = String(slugData);
-		}else if(slugData && typeof slugData === 'object'){
-			itemKey = slugData.idItem || slugData.id || slugData.key || slugData.itemKey || slugData.itemId || slugData.idNegocio || slugData.idRegistro;
-		}
-		if(!itemKey){
-			return null;
-		}
-
-		var itemPaths = [
-			basePath + "/data/" + collection + "/" + itemKey,
-			basePath + "/" + collection + "/data/" + itemKey,
-			basePath + "/" + collection + "/" + itemKey
-		];
-
-		var itemPromise = Promise.resolve(null);
-		itemPaths.forEach(function(path){
-			itemPromise = itemPromise.then(function(found){
-				if(found){
-					return found;
-				}
-				return db.ref(path).once('value').then(function(itemSnapshot){
-					if(!itemSnapshot.exists()){
-						return null;
-					}
-					return itemSnapshot.val();
-				});
-			});
-		});
-
-		return itemPromise.then(function(itemData){
-			if(!itemData){
-				return null;
-			}
-			FrenifyDeebo.applyProfileData(collection, itemData);
-			return null;
-		});
+		FrenifyDeebo.applyProfileData(match.collection, match.itemData);
+		return null;
 	})
 	.catch(function(error){
 		if(window.console && window.console.warn){
