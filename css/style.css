@@ -48,6 +48,7 @@ body{
 	font-weight: 400;
 	color: #0b0a0c;
 	position: relative;
+	overflow-x: hidden;
 }
 [class^="deebo_fn_"]{
 	width: 100%;
@@ -355,6 +356,7 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	border-radius: 5px;
 	padding: 7px 10px;
 	width: 100%;
+	min-width: 0;
 	min-height: 40px;
 	display: -webkit-flex;
 	display: -moz-flex;
@@ -363,6 +365,8 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	display: flex;
 	-ms-align-items: center;
 	align-items: center;
+	overflow-wrap: anywhere;
+	word-break: break-word;
 }
 .deebo_fn__cv .social{
 	margin: 0;
@@ -2337,6 +2341,12 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 		right: 0;
 		bottom: 0;
 		border-radius: 0;
+		max-width: 100%;
+		overflow-x: hidden;
+	}
+	.deebo_fn_cv{
+		max-width: 100%;
+		overflow-x: hidden;
 	}
 	.deebo_fn_cv .closer{
 		z-index: 999;
