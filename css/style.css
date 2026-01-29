@@ -185,18 +185,19 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	opacity: 0;
 }
 .deebo_fn__cv .cv__content{
-  	scrollbar-width: thin;
-  	scrollbar-color: #000 #000;
+  	scrollbar-width: none;
+  	scrollbar-color: transparent transparent;
 }
 .deebo_fn__cv .cv__content::-webkit-scrollbar{
-	width: 14px;
+	width: 0;
+	height: 0;
 }
 .deebo_fn__cv .cv__content:-webkit-scrollbar-track{
-	background: #000;
+	background: transparent;
 }
 .deebo_fn__cv .cv__content::-webkit-scrollbar-thumb{
-	background-color: #222;
-	border-radius: 10px;
+	background-color: transparent;
+	border-radius: 0;
 }
 .deebo_fn__cv .cv__bg{
 	position: absolute;
@@ -552,6 +553,14 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	min-height: 90vh;
 	min-height: calc(100vh - 100px); /* 50px spacing from top and 50px from bottom of the window. */
 }
+.deebo_fn__cv .cv__content .section_header{
+	min-height: 100%;
+	height: 100%;
+}
+.deebo_fn__cv .cv__content .section_header .content{
+	min-height: 100%;
+	height: 100%;
+}
 .section_header .left_hero_header{
 	width: 475px;
 	max-width: 40%;
@@ -599,10 +608,10 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	right: 15px;
 	left: 0px;
 	bottom: 0px;
-	background-color: #d3a583;
+	background-color: #F0E40F;
 	z-index: 2;
 	border-radius: 100%;
-	color: rgba(211,165,131,0.1);
+	color: rgba(240,228,15,0.1);
 	box-shadow: -5px 5px 20px;
 }
 .section_header .lines{
