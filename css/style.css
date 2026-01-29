@@ -640,6 +640,19 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 .section_header .right_hero_header{
 	width: 60%;
 }
+.section_header .fn_cs_boxed_list li{
+	margin-bottom: 12px;
+}
+.section_header .fn_cs_boxed_list .item{
+	padding: 24px 28px;
+}
+.section_header .fn_cs_boxed_list h3{
+	font-size: 24px;
+	margin-bottom: 10px;
+}
+.section_header .fn_cs_boxed_list p{
+	font-size: 16px;
+}
 .section_header .person_info{
 	position: absolute;
 	right: 52px;
