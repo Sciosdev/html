@@ -253,17 +253,18 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 }
 
 .deebo_fn__cv .cv__header .in{
-  	scrollbar-width: thin;
-  	scrollbar-color: #000 #000;
+  	scrollbar-width: none;
+  	scrollbar-color: transparent transparent;
 }
 .deebo_fn__cv .cv__header .in::-webkit-scrollbar{
 	width: 0;
+	height: 0;
 }
 .deebo_fn__cv .cv__header .in:-webkit-scrollbar-track{
-	background: #000;
+	background: transparent;
 }
 .deebo_fn__cv .cv__header .in::-webkit-scrollbar-thumb{
-	background-color: #222;
+	background-color: transparent;
 	border-radius: 10px;
 }
 .deebo_fn__cv .cv__header .avatar{
