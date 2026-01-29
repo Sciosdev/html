@@ -313,6 +313,12 @@ Promise.all(collectionPromises)
 		},
 		
 		magnific: function(){
+			$('.popup-image').magnificPopup({
+				type: 'image',
+				removalDelay: 300,
+				mainClass: 'mfp-fade'
+			});
+
 			$('.gallery_zoom').each(function() { // the containers for all your galleries
 				$(this).magnificPopup({
 					delegate: 'a.zoom', // the selector for gallery item
