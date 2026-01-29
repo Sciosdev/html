@@ -29,7 +29,7 @@
 /*	01) Base
 /*------------------------------------------------------------------*/
 :root{
-	--mc: #3452ff;
+	--mc: #630f11;
 }
 html{
 	overflow-x: hidden;
@@ -539,8 +539,8 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	overflow: hidden;
 }
 .section_header .content{
-	padding-top: 200px;
-	padding-bottom: 200px;
+	padding-top: 50px;
+	padding-bottom: 50px;
 	display: -webkit-flex;
 	display: -moz-flex;
 	display: -ms-flex;
@@ -550,7 +550,7 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	align-items: center;
 	justify-content: space-between;
 	min-height: 90vh;
-	min-height: calc(100vh - 160px); /* 50px spacing from top, 50px from bottom of the window & 30px from top, 30px from bottom of the section. Summary 160px */
+	min-height: calc(100vh - 100px); /* 50px spacing from top and 50px from bottom of the window. */
 }
 .section_header .left_hero_header{
 	width: 475px;
@@ -622,7 +622,7 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	background: -moz-linear-gradient(180deg, var(--mc) 50%, rgba(211,165,131,1) 50%, rgba(211,165,131,1) 100%);
 	background: -webkit-linear-gradient(180deg, var(--mc) 50%, rgba(211,165,131,1) 50%, rgba(211,165,131,1) 100%);
 	background: linear-gradient(180deg, var(--mc) 50%, rgba(211,165,131,1) 50%, rgba(211,165,131,1) 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3452ff",endColorstr="#d3a583",GradientType=1);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#630f11",endColorstr="#d3a583",GradientType=1);
 	transform: rotate(30deg);
 	z-index: 13;
 	position: absolute;
