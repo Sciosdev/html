@@ -270,6 +270,8 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 }
 .deebo_fn__cv .cv__header .avatar{
 	margin-bottom: 20px;
+	display: flex;
+	justify-content: center;
 }
 .deebo_fn__cv .cv__header .avatar img{
 	max-width: 200px;
@@ -285,6 +287,7 @@ body.resume-opened .deebo_fn__cv .cv__bg2{
 	text-transform: uppercase;
 	letter-spacing: .5px;
 	margin-bottom: 20px;
+	text-align: center;
 }
 .deebo_fn__cv .cv__header h3 span{
 	color: var(--mc);

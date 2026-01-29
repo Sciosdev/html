@@ -252,14 +252,26 @@ Promise.all(collectionPromises)
 				if(useAsBackground){
 					element.attr('data-bg-img', value);
 					element.css({backgroundImage:'url(' + value + ')'});
+					var bgPopupLink = element.closest('a.popup-image');
+					if(bgPopupLink.length){
+						bgPopupLink.attr('href', value);
+					}
 					return;
 				}
 				if(element.is('img')){
 					element.attr('src', value);
+					var popupLink = element.closest('a.popup-image');
+					if(popupLink.length){
+						popupLink.attr('href', value);
+					}
 					return;
 				}
 				element.attr('data-bg-img', value);
 				element.css({backgroundImage:'url(' + value + ')'});
+				var fallbackPopupLink = element.closest('a.popup-image');
+				if(fallbackPopupLink.length){
+					fallbackPopupLink.attr('href', value);
+				}
 			});
 		},
 
