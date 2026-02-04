@@ -41,6 +41,11 @@ $.fn.DeeboProgressIsInViewport = function(content) {
 
 			var slug = FrenifyDeebo.getSlugFromPath();
 			if(!slug){
+				var hostname = window.location.hostname || '';
+				var isOrgAcme = hostname === 'orgacme.com' || hostname === 'www.orgacme.com';
+				if(isOrgAcme){
+					window.location.replace('https://miacme.com/');
+				}
 				return;
 			}
 
