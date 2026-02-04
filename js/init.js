@@ -49,16 +49,13 @@ $.fn.DeeboProgressIsInViewport = function(content) {
 				return;
 			}
 
-			var firebaseConfig = {
-				apiKey: "AIzaSyCiGeCQ3iy6mwNIe303tWBIB1Uduyss1y4",
-				authDomain: "acme-b9b61.firebaseapp.com",
-				databaseURL: "https://acme-b9b61-default-rtdb.firebaseio.com",
-				projectId: "acme-b9b61",
-				storageBucket: "acme-b9b61.appspot.com",
-				messagingSenderId: "550286905719",
-				appId: "1:550286905719:web:988d4c339c7e7fd23f1172",
-				measurementId: "G-P8JM5MP1ZC"
-			};
+			var firebaseConfig = window.DEBOO_FIREBASE_CONFIG || null;
+			if(!firebaseConfig || !firebaseConfig.apiKey){
+				if(window.console && window.console.warn){
+					window.console.warn('Missing Firebase config: set window.DEBOO_FIREBASE_CONFIG before init.');
+				}
+				return;
+			}
 
 			if(!firebase.apps.length){
 				firebase.initializeApp(firebaseConfig);
